@@ -19,6 +19,10 @@ USA.
 
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * An implementation of {@link LocalClient} that is controlled by the keyboard
@@ -32,9 +36,27 @@ public class GUIClient extends LocalClient implements KeyListener {
         /**
          * Create a GUI controlled {@link LocalClient}.  
          */
+		
+		
+		Socket clientSocket = null;
+		DirectedPoint startingPoint = null;
+		Mazewar mazeWar;
+		
         public GUIClient(String name) {
                 super(name);
+               
+                
         }
+        
+        public void setStartPoint(DirectedPoint startingPoint,Mazewar mazewar) {
+			this.startingPoint = startingPoint;
+			mazeWar = mazewar;
+			
+			//clientSocket = clientSock;
+			//transmitPacket(pack);
+			
+		}
+
         
         /**
          * Handle a key press.
@@ -42,25 +64,78 @@ public class GUIClient extends LocalClient implements KeyListener {
          */
         public void keyPressed(KeyEvent e) {
                 // If the user pressed Q, invoke the cleanup code and quit. 
+        		MazewarPacket pack = new MazewarPacket();
+        		pack.player = getName();
                 if((e.getKeyChar() == 'q') || (e.getKeyChar() == 'Q')) {
-                        Mazewar.quit();
+                       // Mazewar.quit();
+                        if(clientSocket!=null)
+                        {
+                        	
+                        }
+                        
                 // Up-arrow moves forward.
                 } else if(e.getKeyCode() == KeyEvent.VK_UP) {
-                        forward();
+                       // forward();
+                        if(mazeWar.clientSocket!=null)
+                        {
+                        	pack.type = ClientEvent.MOVE_FORWARD;
+                        	transmitPacket(pack);
+                        }
                 // Down-arrow moves backward.
                 } else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                        backup();
+                        //backup();
+                        if(mazeWar.clientSocket!=null)
+                        {
+                        	pack.type = ClientEvent.MOVE_BACKWARD;
+                        	transmitPacket(pack);
+                        }
                 // Left-arrow turns left.
                 } else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                        turnLeft();
+                        //turnLeft();
+                        if(mazeWar.clientSocket!=null)
+                        {
+                        	pack.type = ClientEvent.TURN_LEFT;
+                        	transmitPacket(pack);
+                        }
                 // Right-arrow turns right.
                 } else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                        turnRight();
+                       // turnRight();
+                        if(mazeWar.clientSocket!=null)
+                        {
+                        	pack.type = ClientEvent.TURN_RIGHT;
+                        	transmitPacket(pack);
+                        }
                 // Spacebar fires.
                 } else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        fire();
+                       // fire();
+                        if(mazeWar.clientSocket!=null)
+                        {
+                        	pack.type = ClientEvent.FIRE;
+                        	transmitPacket(pack);
+                        }
                 }
+                
         }
+        
+        
+       
+        
+        public void transmitPacket(MazewarPacket packetToServer)
+        {
+        	ObjectOutputStream out;
+			try {
+				
+				mazeWar.outputToServer.writeObject(packetToServer);
+				
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+        }
+        
+        
         
         /**
          * Handle a key release. Not needed by {@link GUIClient}.
@@ -76,4 +151,5 @@ public class GUIClient extends LocalClient implements KeyListener {
         public void keyTyped(KeyEvent e) {
         }
 
+		
 }

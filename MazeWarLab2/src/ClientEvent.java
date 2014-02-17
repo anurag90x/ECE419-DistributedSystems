@@ -29,11 +29,13 @@ public class ClientEvent {
         /**
          * Internal representations of events.
          */
-        private static final int MOVE_FORWARD = 0;
-        private static final int MOVE_BACKWARD = 1;
-        private static final int TURN_LEFT = 2;
-        private static final int TURN_RIGHT = 3;
-        private static final int FIRE = 4;
+        public static final int MOVE_FORWARD = 0;
+        public static final int MOVE_BACKWARD = 1;
+        public static final int TURN_LEFT = 2;
+        public static final int TURN_RIGHT = 3;
+        public static final int FIRE = 4;
+        public static final int ENTER = 5;
+        public static final int QUIT = 6;
         
         /**
          * Default to 0, to be invalid.
@@ -49,6 +51,10 @@ public class ClientEvent {
         }
 
         /* Public data ****************************************************/
+        
+        public static final ClientEvent joinGame = new ClientEvent(ENTER);
+        
+        public static final ClientEvent exitGame = new ClientEvent(QUIT);
         
         /** 
          * Generated when a {@link Client} moves forward.

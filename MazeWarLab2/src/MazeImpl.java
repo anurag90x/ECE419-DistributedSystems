@@ -193,7 +193,7 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                 return getCellImpl(point);
         }
         
-        public synchronized void addClient(Client client) {
+        public synchronized DirectedPoint addClient(Client client) {
                 assert(client != null);
                 // Pick a random starting point, and check to see if it is already occupied
                 Point point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
@@ -203,7 +203,7 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                         point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
                         cell = getCellImpl(point);
                 } 
-                addClient(client, point);
+                return addClient(client, point);
         }
         
         public synchronized Point getClientPoint(Client client) {
@@ -353,7 +353,7 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                                 }
                         }
                         try {
-                                thread.sleep(200);
+                                thread.sleep(500);
                         } catch(Exception e) {
                                 // shouldn't happen
                         }
@@ -420,7 +420,7 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
          * @param client The {@link Client} to be added.
          * @param point The location the {@link Client} should be added.
          */
-        private synchronized void addClient(Client client, Point point) {
+        private synchronized DirectedPoint addClient(Client client, Point point) {
                 assert(client != null);
                 assert(checkBounds(point));
                 CellImpl cell = getCellImpl(point);
@@ -429,11 +429,13 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                   d = Direction.random();
                 }
                 cell.setContents(client);
-                clientMap.put(client, new DirectedPoint(point, d));
+                DirectedPoint dirPoint = new DirectedPoint(point, d);
+                clientMap.put(client,dirPoint );
                 client.registerMaze(this);
                 client.addClientListener(this);
                 update();
                 notifyClientAdd(client);
+                return dirPoint; 
         }
         
         /**

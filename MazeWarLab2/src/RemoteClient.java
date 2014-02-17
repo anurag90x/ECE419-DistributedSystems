@@ -29,10 +29,26 @@ public class RemoteClient extends Client {
          * Create a remotely controlled {@link Client}.
          * @param name Name of this {@link RemoteClient}.
          */
+	
+		DirectedPoint startingPoint = null;
         public RemoteClient(String name) {
                 super(name);
         }
 
+        public RemoteClient(String name,DirectedPoint startPoint)
+        {
+        	super(name);
+        	startingPoint = startPoint;
+        }
+        
+        
+        public void quit()
+        {
+        	//remove the client from the canvas and update the score model and stuff accordingly.
+        	maze.removeClient(this);
+        }
+       
+        
         /**
          * May want to fill in code here.
          */ 
