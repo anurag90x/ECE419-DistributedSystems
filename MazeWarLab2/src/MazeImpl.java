@@ -438,6 +438,21 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                 return dirPoint; 
         }
         
+        public synchronized void addRemoteClient(Client client,DirectedPoint startPoint)
+        {
+        	 assert(client != null);
+             assert(checkBounds(startPoint));
+             CellImpl cell = getCellImpl(startPoint);
+           
+             cell.setContents(client);
+             clientMap.put(client,startPoint );
+             client.registerMaze(this);
+             client.addClientListener(this);
+             update();
+             notifyClientAdd(client);
+            
+        }
+        
         /**
          * Internal helper for handling the death of a {@link Client}.
          * @param source The {@link Client} that fired the projectile.

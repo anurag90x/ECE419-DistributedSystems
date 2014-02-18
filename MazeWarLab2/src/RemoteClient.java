@@ -1,3 +1,4 @@
+
 /*
 Copyright (C) 2004 Geoffrey Alan Washburn
    
@@ -48,6 +49,11 @@ public class RemoteClient extends Client {
         	maze.removeClient(this);
         }
        
+        
+       /* public void addClient()
+        {
+        	maze.addRemoteClient(this, startingPoint);
+        }*/
         
         /**
          * May want to fill in code here.

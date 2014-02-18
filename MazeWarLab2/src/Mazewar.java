@@ -341,22 +341,29 @@ class DequeueRunnable implements Runnable {
 
 	@Override
 	public void run() {
+		boolean rendered = false;
 		while (true) {
 			while (mw.packQueue.size() > 0) {
 				try {
 					MazewarPacket packet = mw.packQueue.take();
 					System.out.println("Removed "+packet.sequenceTag);
 					String player = packet.player;
-					System.out.println(player);
+					System.out.println(player+" "+counter+" "+mw.guiClient.getName());
+					if (counter == 1 && !rendered ) {
+						mw.renderLocalGUI(mw.scoreModel);
+						rendered = true;
+
+					}
+					
 					if (!player.equals(mw.guiClient.getName())
 							&& packet.type == ClientEvent.ENTER) {
 						parseRemote(packet);
+						System.out.println("New player joined "+player);
+
 						counter++;
 
 						// No of players supported is 4
-					if (counter == 1) {
-							mw.renderLocalGUI(mw.scoreModel);
-						}
+					
 
 					}
 					
@@ -421,7 +428,8 @@ class DequeueRunnable implements Runnable {
 
 	public void parseRemote(MazewarPacket packet) {
 		RemoteClient rc = new RemoteClient(packet.player, packet.startingPoint);
-		mw.maze.addClient(rc);
+		System.out.println(packet.startingPoint.getX()+" "+packet.startingPoint.getY());
+		mw.maze.addRemoteClient(rc, packet.startingPoint);
 		remoteClientMap.put(rc.getName(), rc);
 	}
 }
