@@ -61,7 +61,8 @@ public class Mazewar extends JFrame {
 	 * same protocol must use the same seed value, or your mazes will be
 	 * different.
 	 */
-	private final int mazeSeed = 42;
+	private final int mazeSeed = 1882;
+	//private final int mazeSeed = (int) System.currentTimeMillis()%1000;
 
 	/**
 	 * The {@link Maze} that the game uses.
@@ -287,7 +288,8 @@ public class Mazewar extends JFrame {
 	public static void main(String args[]) {
 
 		/* Create the GUI */
-		String hostname = "localhost";
+		String hostname = args[0];
+		System.out.println(hostname);
 		int port = 4445;
 		Mazewar mw = new Mazewar(hostname, port);
 		Thread queueThread;
@@ -341,7 +343,7 @@ class DequeueRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		boolean rendered = false;
+		
 		while (true) {
 			while (mw.packQueue.size() > 0) {
 				try {
@@ -349,29 +351,34 @@ class DequeueRunnable implements Runnable {
 					System.out.println("Removed "+packet.sequenceTag);
 					String player = packet.player;
 					System.out.println(player+" "+counter+" "+mw.guiClient.getName());
-					if (counter == 1 && !rendered ) {
-						mw.renderLocalGUI(mw.scoreModel);
-						rendered = true;
-
-					}
-					
-					if (!player.equals(mw.guiClient.getName())
-							&& packet.type == ClientEvent.ENTER) {
+					/*if (player==null)
+						continue;*/
+					if (player!=null && !player.equals(mw.guiClient.getName())
+							&& packet.type == ClientEvent.ENTER ) {
 						parseRemote(packet);
 						System.out.println("New player joined "+player);
 
-						counter++;
-
+						
 						// No of players supported is 4
 					
 
 					}
+					if(packet.renderReady==1)
+					{
+							mw.renderLocalGUI(mw.scoreModel);
+					}
 					
-					else if (player.equals(mw.guiClient.getName())) {
-						clientHandler(mw.guiClient, packet);
-					} else {
-						clientHandler(remoteClientMap.get(packet.player),
-								packet);
+					
+					
+					else
+						
+					{
+						if (player.equals(mw.guiClient.getName())) {
+							clientHandler(mw.guiClient, packet);
+						} else {
+							clientHandler(remoteClientMap.get(packet.player),
+									packet);
+						}
 					}
 
 			}catch(InterruptedException e)
@@ -428,7 +435,7 @@ class DequeueRunnable implements Runnable {
 
 	public void parseRemote(MazewarPacket packet) {
 		RemoteClient rc = new RemoteClient(packet.player, packet.startingPoint);
-		System.out.println(packet.startingPoint.getX()+" "+packet.startingPoint.getY());
+		System.out.println("Register new client here "+packet.startingPoint.getX()+" "+packet.startingPoint.getY());
 		mw.maze.addRemoteClient(rc, packet.startingPoint);
 		remoteClientMap.put(rc.getName(), rc);
 	}

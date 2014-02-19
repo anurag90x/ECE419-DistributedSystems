@@ -14,8 +14,9 @@ public class MazewarServer {
 		static int sequenceTag = 0;
 		static PriorityBlockingQueue<MazewarPacket> packQueue = new PriorityBlockingQueue<MazewarPacket>();
 		static Thread queueThread;	
-		//static ArrayList<Socket> socketList = new ArrayList<Socket>();
 		static HashMap<Socket,ArrayList<Object>> socketMap = new HashMap<Socket,ArrayList<Object>>();
+		static ArrayList<MazewarPacket> entryPacketList = new ArrayList<MazewarPacket>();
+		static final int CLIENTS_SUPPORTED = 4;
 		
 		public static void main(String args[])
 		{
@@ -33,16 +34,49 @@ public class MazewarServer {
 					
 					@Override
 					public void run() {
-						
+						boolean rendered = false;
+
+						MazewarPacket render = new MazewarPacket();
+						render.renderReady = 1;
+						int counter = 0;
 						while(true){
+							
+							
+							
 							while(MazewarServer.packQueue.size()>0)
 							{
 								System.out.println("Writing to sockets");
 								MazewarPacket packet = MazewarServer.packQueue.remove();
-								for(Socket s: socketMap.keySet())
+								if(packet.type == ClientEvent.ENTER)
+								{	
+									entryPacketList.add(packet);
+									counter++;
+								}
+								if(counter==CLIENTS_SUPPORTED && !rendered)
 								{
-									System.out.println("Transmit packet ");
-									transmitPacket(s,packet);
+									for(Socket s: socketMap.keySet())
+									{
+										System.out.println("Transmit packet render");
+										
+										for(MazewarPacket p: entryPacketList)
+										{
+											transmitPacket(s,p);
+										}
+										transmitPacket(s,render);
+										
+									}
+									rendered = true;
+									
+								}
+								
+								else if(packet.type!=ClientEvent.ENTER)
+								{
+									for(Socket s: socketMap.keySet())
+									{
+										System.out.println("Transmit packet ");
+										transmitPacket(s,packet);
+										
+									}
 								}
 							}
 							
@@ -79,6 +113,7 @@ public class MazewarServer {
 					temp.add(outputToClient);
 					temp.add(inputFromClient);
 					socketMap.put(s, temp);
+					
 					new Thread(new MazeWarThread(s)).start();
 					
 				}
