@@ -194,14 +194,19 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
         }
         
         public synchronized DirectedPoint addClient(Client client) {
+        	
                 assert(client != null);
                 // Pick a random starting point, and check to see if it is already occupied
-                Point point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
+                
+                Random pseudo = new Random();
+                Point point = new Point(pseudo.nextInt(maxY),pseudo.nextInt(maxY));
                 CellImpl cell = getCellImpl(point);
                 // Repeat until we find an empty cell
-                while(cell.getContents() != null) {
-                        point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
+                int counter = 0;
+                while(cell.getContents() != null ) {
+                        point = new Point(pseudo.nextInt(maxX),pseudo.nextInt(maxY));
                         cell = getCellImpl(point);
+                       
                 } 
                 return addClient(client, point);
         }

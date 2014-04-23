@@ -37,7 +37,10 @@ public class MazeWarThread implements Runnable{
 				copyPack.startingPoint = packet.startingPoint;
 				MazewarServer.packQueue.add(copyPack);
 				System.out.println(packet.player+" "+copyPack.type);//+copyPack.sequenceTag);
-				System.out.println("yo "+packet.startingPoint.getX()+" "+packet.startingPoint.getY());
+				if(packet.startingPoint!=null)
+				{
+					System.out.println("yo "+packet.startingPoint.getX()+" "+packet.startingPoint.getY());
+				}
 			}
 			
 			in.close();
