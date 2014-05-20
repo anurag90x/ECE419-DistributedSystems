@@ -1,4 +1,3 @@
-package broker.broker1;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,7 +45,7 @@ public class OnlineBroker {
 	
 public static void loadStockFile()
 {
-	File stockFile = new File("src\\broker\\broker1\\nasdaq");
+	File stockFile = new File("nasdaq");
 	if (!stockFile.exists())
 	{
 		System.err.println("ERROR Stock mapping file not found "+stockFile.getAbsolutePath());

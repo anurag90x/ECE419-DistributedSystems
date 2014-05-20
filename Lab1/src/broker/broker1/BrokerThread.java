@@ -1,4 +1,4 @@
-package broker.broker1;
+
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,40 +29,37 @@ public class BrokerThread extends Thread {
 			ObjectInputStream inputFromClient =new ObjectInputStream(sock.getInputStream());
 			ObjectOutputStream outputToClient = new ObjectOutputStream( sock.getOutputStream());
 
-			BrokerPacket pack;
+			BrokerPacket pack;	
 			Long quoteValue = (long) 0;
 			while((pack = (BrokerPacket) inputFromClient.readObject())!=null)
 			{
-				System.out.println("Get input from client..");
+				BrokerPacket reply = new BrokerPacket();
+				reply.type = BrokerPacket.BROKER_QUOTE;
+				System.out.println("Get input from client.."+pack.symbol);
 				if(pack.type == BrokerPacket.BROKER_REQUEST)
 				{
 					String brokerKey = pack.symbol; // request quote for the given key
 					if (OnlineBroker.stockQuotes.containsKey(brokerKey))
 					{
 						quoteValue = OnlineBroker.stockQuotes.get(brokerKey);
-						pack.type = BrokerPacket.BROKER_QUOTE;
-						pack.quote = quoteValue;
-						System.out.println("Write output back...");
+						reply.quote = quoteValue;
 					}
 					else
 					{
-						pack.quote = (long) 0;
+						reply.quote = (long) 0;
 					}
 					
 				}
 				else if (pack.type == BrokerPacket.BROKER_BYE || pack.type == BrokerPacket.BROKER_NULL)
 				{
-					/*gotByePacket = true;
-					pack = new BrokerPacket();
-					pack.type = BrokerPacket.BROKER_BYE;
-					System.out.println("Write output back for exit...");
-					outputToClient.writeObject(pack);*/
+				
 					break;
 				}
-				outputToClient.writeObject(pack);
+				System.out.println("Write output back...");
+				outputToClient.writeObject(reply);
 
 			}
-			
+		
 
 			// book-keeping
 			inputFromClient.close();
@@ -70,10 +67,8 @@ public class BrokerThread extends Thread {
 			sock.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
