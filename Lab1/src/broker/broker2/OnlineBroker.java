@@ -1,5 +1,3 @@
-package broker.broker2;
-
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -91,7 +89,7 @@ public static void init()
 {
 
 	
-	File stockFile = new File("src\\broker\\broker2\\nasdaq");
+	File stockFile = new File("nasdaq");
 	if (!stockFile.exists())
 	{
 		System.err.println("ERROR Stock mapping file not found");

@@ -1,6 +1,4 @@
-package broker.broker2;
-
-
+ 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import broker.broker2.OnlineBroker;
 
 public class BrokerThread implements Runnable {
 	
@@ -34,28 +31,27 @@ public class BrokerThread implements Runnable {
 			Long quoteValue = (long) 0;
 			while((pack = (BrokerPacket) inputFromClient.readObject())!=null)
 			{
+				BrokerPacket reply = new BrokerPacket();
+				reply.type = BrokerPacket.BROKER_QUOTE;
 				if(pack.type == BrokerPacket.BROKER_REQUEST)
 				{
 					String brokerKey = pack.symbol; // request quote for the given key
 					if (OnlineBroker.stockQuotes.containsKey(brokerKey))
 					{
 						quoteValue = OnlineBroker.stockQuotes.get(brokerKey);
-						pack.type = BrokerPacket.BROKER_QUOTE;
-						pack.quote = quoteValue;
-						outputToClient.writeObject(pack);
+						reply.quote = quoteValue;
 
+					}
+					else{
+						reply.quote = (long)0;
 					}
 					
 					
 					
 				}
-				else if (pack.type == BrokerPacket.BROKER_BYE || pack.type == BrokerPacket.BROKER_NULL)
+				else if (pack.type == BrokerPacket.BROKER_BYE || pack.type == BrokerPacket.BROKER_NULL || pack.type == BrokerPacket.EXCHANGE_BYE)
 				{
-					/*gotByePacket = true;
-					pack = new BrokerPacket();
-					pack.type = BrokerPacket.BROKER_BYE;
-					pack.symbol = "Bye";
-					outputToClient.writeObject(pack);*/
+					
 
 					break;
 				}
@@ -63,29 +59,28 @@ public class BrokerThread implements Runnable {
 				else if (pack.type == BrokerPacket.EXCHANGE_ADD)
 				{
 					// check if symbol already exists and the out of range condition
-					pack.type = BrokerPacket.EXCHANGE_REPLY;
+					reply.type = BrokerPacket.EXCHANGE_REPLY;
 
 					if(OnlineBroker.stockQuotes.containsKey(pack.symbol))
 					{
-						pack.error_code = BrokerPacket.ERROR_SYMBOL_EXISTS;
+						reply.error_code = BrokerPacket.ERROR_SYMBOL_EXISTS;
 					}
 					else if (pack.quote <1 || pack.quote>300)
 					{
 						
-						pack.error_code = BrokerPacket.ERROR_OUT_OF_RANGE;
+						reply.error_code = BrokerPacket.ERROR_OUT_OF_RANGE;
 					}
 					else
 					{
 						// good case
-						pack.type = BrokerPacket.EXCHANGE_REPLY;
-
+						reply.type = BrokerPacket.EXCHANGE_REPLY;
 						OnlineBroker.stockQuotes.put(pack.symbol,pack.quote);
 					}
 				}
 				
 				else if (pack.type == BrokerPacket.EXCHANGE_REMOVE)
 				{
-					pack.type = BrokerPacket.EXCHANGE_REPLY;
+					reply.type = BrokerPacket.EXCHANGE_REPLY;
 
 					if(OnlineBroker.stockQuotes.containsKey(pack.symbol))
 					{
@@ -95,23 +90,23 @@ public class BrokerThread implements Runnable {
 					else
 					{
 
-						pack.error_code = BrokerPacket.ERROR_INVALID_SYMBOL; // symbol not present
+						reply.error_code = BrokerPacket.ERROR_INVALID_SYMBOL; // symbol not present
 					}
 				}
 				
 				else if (pack.type == BrokerPacket.EXCHANGE_UPDATE)
 				{
-					pack.type = BrokerPacket.EXCHANGE_REPLY;
+					reply.type = BrokerPacket.EXCHANGE_REPLY;
 
 					if (!OnlineBroker.stockQuotes.containsKey(pack.symbol))
 					{
 
-						pack.error_code = BrokerPacket.ERROR_INVALID_SYMBOL;
+						reply.error_code = BrokerPacket.ERROR_INVALID_SYMBOL;
 					}
 					else if (pack.quote <1 || pack.quote>300)
 						{
 
-							pack.error_code = BrokerPacket.ERROR_OUT_OF_RANGE;
+							reply.error_code = BrokerPacket.ERROR_OUT_OF_RANGE;
 						}
 					else
 					{
@@ -121,7 +116,7 @@ public class BrokerThread implements Runnable {
 					 
 				}
 				
-				outputToClient.writeObject(pack);
+				outputToClient.writeObject(reply);
 
 				
 			}
@@ -149,7 +144,7 @@ public class BrokerThread implements Runnable {
 	public static void flushToDisk()
 	{
 		System.out.println("Flushing");
-		File stockFile = new File("src\\broker\\broker2\\nasdaq");
+		File stockFile = new File("nasdaq");
 		if (!stockFile.exists())
 		{
 			System.err.println("ERROR Stock mapping file not found");

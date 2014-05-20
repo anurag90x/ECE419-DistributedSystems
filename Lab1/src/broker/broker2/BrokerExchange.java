@@ -1,4 +1,3 @@
-package broker.broker2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,19 +39,13 @@ public class BrokerExchange {
 		sock = new Socket(hostname,port);
 		System.out.println("Connection made to server ...");
 		out = new ObjectOutputStream(sock.getOutputStream());
-
 		input = new ObjectInputStream( sock.getInputStream());
-
-		System.out.println(">");
-
+		System.out.print(">");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String userInput="";
-		
-		
+		String userInput="";			
 		
 		while((userInput = br.readLine()) != null && userInput.indexOf("x")==-1)
 		{
-			//System.out.println("ui");
 			String[] commandWords = userInput.split(" "); //commandWords
 			BrokerPacket newExchangePacket = new BrokerPacket();
 			if (commandWords[0].equalsIgnoreCase("add"))
@@ -72,6 +65,12 @@ public class BrokerExchange {
 				newExchangePacket.symbol = commandWords[1].trim();
 				newExchangePacket.quote = Long.parseLong(commandWords[2].trim());
 			}
+			else if (commandWords[0].equalsIgnoreCase("x"))
+			{
+				newExchangePacket.type = BrokerPacket.EXCHANGE_BYE;
+				out.writeObject(newExchangePacket);
+				break;
+			}
 			
 			System.out.println("Write packet to server ");
 			out.writeObject(newExchangePacket);
@@ -90,6 +89,7 @@ public class BrokerExchange {
 				}
 				
 			}
+			System.out.print(">");
 			
 			
 		}
