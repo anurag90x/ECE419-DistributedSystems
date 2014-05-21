@@ -1,4 +1,3 @@
-package broker.broker3;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import broker.broker3.OnlineBroker;
 
 public class BrokerThread implements Runnable {
 	
@@ -82,7 +80,7 @@ public class BrokerThread implements Runnable {
 
 					
 				}
-				else if (pack.type == BrokerPacket.BROKER_BYE || pack.type == BrokerPacket.BROKER_NULL)
+				else if (pack.type == BrokerPacket.BROKER_BYE || pack.type == BrokerPacket.BROKER_NULL || pack.type == BrokerPacket.EXCHANGE_BYE)
 				{
 					System.out.println("Bye from client. Close stuff ");
 					break;
@@ -264,7 +262,7 @@ public class BrokerThread implements Runnable {
 	public static void flushToDisk()
 	{
 		System.out.println("Flushing to file "+name);
-		File stockFile = new File("src\\broker\\broker3\\"+name);
+		File stockFile = new File(name);
 		if (!stockFile.exists())
 		{
 			System.err.println("ERROR Stock mapping file not found");

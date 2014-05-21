@@ -1,4 +1,3 @@
-package broker.broker3;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class BrokerExchange {
 		out = new ObjectOutputStream(sock.getOutputStream());
 		input = new ObjectInputStream( sock.getInputStream());
 
-		System.out.println(">");
+		System.out.print(">");
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String userInput="";
@@ -99,7 +98,7 @@ public class BrokerExchange {
 				
 			}
 			
-			System.out.println(">");
+			System.out.print(">");
 			
 		}
 		BrokerPacket pack = new BrokerPacket();

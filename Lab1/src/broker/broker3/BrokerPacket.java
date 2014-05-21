@@ -1,4 +1,3 @@
-package broker.broker3;
 
 import java.io.Serializable;
  /**
@@ -10,23 +9,6 @@ import java.io.Serializable;
  */
 
 
-/* inline class to describe host/port combo */
-class BrokerLocation implements Serializable {
-	public String  broker_host;
-	public Integer broker_port;
-	
-	/* constructor */
-	public BrokerLocation(String host, Integer port) {
-		this.broker_host = host;
-		this.broker_port = port;
-	}
-	
-	/* printable output */
-	public String toString() {
-		return " HOST: " + broker_host + " PORT: " + broker_port; 
-	}
-	
-}
 
 public class BrokerPacket implements Serializable {
 
@@ -44,6 +26,8 @@ public class BrokerPacket implements Serializable {
 	public static final int EXCHANGE_UPDATE = 202;
 	public static final int EXCHANGE_REMOVE = 203;
 	public static final int EXCHANGE_REPLY  = 204;
+	public static final int EXCHANGE_BYE	= 205;
+
 	
 	
 	/* for part 3 */

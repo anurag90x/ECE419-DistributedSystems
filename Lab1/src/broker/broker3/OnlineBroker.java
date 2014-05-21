@@ -1,4 +1,3 @@
-package broker.broker3;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,16 +28,13 @@ public class OnlineBroker {
 			# $3 = port where I will be listening
 			# $4 = my name ("nasdaq" or "tse")
 
-		 * 
-		 * */
+		  */
 		
 		
 		ServerSocket server = null;
 		String myName="";
 		String listeningServerHostName = "";
 		int listeningServerPort = 0;
-		
-		
 		
 		boolean listening = true;
 		try
@@ -90,20 +86,13 @@ public static void registerService(String lookupHost,int lookupPort,String serve
 	try {
 		Socket registerSocket = new Socket(lookupHost,lookupPort);
 		ObjectOutputStream output = new ObjectOutputStream(registerSocket.getOutputStream());
-
-		ObjectInputStream input = new ObjectInputStream(registerSocket.getInputStream());
-		
+		ObjectInputStream input = new ObjectInputStream(registerSocket.getInputStream());	
 		BrokerPacket registerPacket = new BrokerPacket();
 		registerPacket.type = BrokerPacket.LOOKUP_REGISTER;
 		registerPacket.symbol = serverName;
 		registerPacket.locations = new BrokerLocation[1];
 		registerPacket.locations[0]=new BrokerLocation(registerSocket.getLocalAddress().getHostAddress(),serverPort);
-		
-		
-		output.writeObject(registerPacket);
-		
-		
-		
+		output.writeObject(registerPacket);		
 		output.close();
 		input.close();
 		registerSocket.close();
@@ -124,7 +113,7 @@ public static void init(String myName)
 {
 
 	System.out.println("Broker name is  "+myName);
-	File stockFile = new File("src\\broker\\broker3\\"+myName);
+	File stockFile = new File(myName);
 	if (!stockFile.exists())
 	{
 		System.err.println("ERROR Stock mapping file not found");
