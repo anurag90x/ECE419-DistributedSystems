@@ -219,7 +219,7 @@ public class OverheadMazePanel extends JPanel implements MazeListener {
                                                                 rotation=java.lang.Math.PI;
                                                         }
 
-                                                        System.out.println("Rotation is "+rotation);
+                                                       // System.out.println("Rotation is "+rotation);
                                                         g2.rotate(rotation);
                                                         g2.fill(player);
                                                         g2.rotate(-rotation);

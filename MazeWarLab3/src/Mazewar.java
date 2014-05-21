@@ -355,10 +355,9 @@ public class Mazewar extends JFrame {
 		}
 
 
+
 		Thread rnm = new Thread(new ReceiveNeighbourManager(nmServerPort,mw));
 		rnm.start();
-
-
 		//Request neighbour and  loop until connection is made
 		while(Mazewar.outgoingSocket == null)
 		{
@@ -375,6 +374,7 @@ public class Mazewar extends JFrame {
 			}	
 			catch(Exception ex)
 			{
+				//ex.printStackTrace();
 				continue;
 			}							
 		}
@@ -384,6 +384,8 @@ public class Mazewar extends JFrame {
 			inSock = new ObjectInputStream(Mazewar.outgoingSocket.getInputStream());
 			MazewarPacket pack3 = new MazewarPacket(MazewarPacket.NULL);
 			outSock.writeObject(pack3);
+
+			
 			System.out.println("Connected to neighbour server "+Mazewar.outgoingSocket);
 		}
 		catch(Exception ex)
@@ -449,12 +451,12 @@ class ReceiveNeighbourManager implements Runnable
 			try {
 				while(true)
 				{
-					//System.out.println("Waiting for connections....");
+					System.out.println("Waiting for connections....");
 					clientSock = server.accept();
 					ObjectOutputStream out = new ObjectOutputStream(clientSock.getOutputStream());
 					ObjectInputStream in = new ObjectInputStream(clientSock.getInputStream());
 					MazewarPacket packet;
-					//System.out.println("Received connection from "+clientSock.getInetAddress().getHostAddress());
+					System.out.println("Received connection from "+clientSock.getInetAddress().getHostAddress());
 					if(Mazewar.hasToken)
 					{
 						// Now, the client has the token and should be allowed to send
@@ -462,6 +464,7 @@ class ReceiveNeighbourManager implements Runnable
 
 						if( Mazewar.messageQueue.size()==0)
 						{
+							System.out.println("Pass token ");
 							MazewarPacket tokenPacket = new MazewarPacket(MazewarPacket.TOKEN);
 							if(Mazewar.outSock ==null && Mazewar.inSock == null)
 							{
@@ -483,6 +486,12 @@ class ReceiveNeighbourManager implements Runnable
 					}
 					while((packet = (MazewarPacket)in.readObject())!=null)
 					{
+						while(Mazewar.outgoingSocket==null)
+						{
+							//System.out.println("Sleep for a bit");
+							// in case the connection to the neighbour hasn't been established yet, wait and check again.
+							Thread.sleep(10);
+						}
 
 						if(packet.mType == MazewarPacket.ACTION )
 						{
@@ -512,7 +521,6 @@ class ReceiveNeighbourManager implements Runnable
 							{
 								incomingClient = Mazewar.remoteClientMap.get(packet.mPlayer);
 
-
 								handleAction(incomingClient,packet.mActionType);
 								//forward packet
 								if(Mazewar.outgoingSocket == null)
@@ -535,7 +543,7 @@ class ReceiveNeighbourManager implements Runnable
 							//Mazewar.hasToken = true;
 							if( Mazewar.messageQueue.size()==0)
 							{
-								//System.out.println("PASS TOKEN ");
+								//System.out.println("pass token");
 								//Mazewar.hasToken = false;
 								MazewarPacket tokenPacket = new MazewarPacket(MazewarPacket.TOKEN);
 								if(Mazewar.outSock ==null && Mazewar.inSock == null)
