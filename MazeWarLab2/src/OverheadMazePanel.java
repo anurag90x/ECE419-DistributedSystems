@@ -196,13 +196,26 @@ public class OverheadMazePanel extends JPanel implements MazeListener {
                                                         Direction orient = c.getOrientation();
                                                         g2.translate(xoffset, yoffset);
                                                         double rotation = 0.0; 
-                                                        if(orient == Direction.South) {
+                                                        /*if(orient == Direction.South) {
                                                                 rotation=-java.lang.Math.PI/2.0;
                                                         } else if (orient == Direction.North) {
                                                                 rotation=java.lang.Math.PI/2.0;
                                                         } else if (orient == Direction.West) {
                                                                 rotation=java.lang.Math.PI;
+                                                        }*/
+
+                                                        if(orient.toString().equals(Direction.South.toString()))
+                                                            {
+                                                                rotation=-java.lang.Math.PI/2.0;
+                                                            }
+                                                         else if (orient.toString().equals(Direction.North.toString())){
+                                                                rotation=java.lang.Math.PI/2.0;
+                                                        } 
+                                                        else if (orient.toString().equals(Direction.West.toString())) {
+                                                                rotation=java.lang.Math.PI;
                                                         }
+
+                                                        //System.out.println("Orientation "+orient);
                                                         g2.rotate(rotation);
                                                         g2.fill(player);
                                                         g2.rotate(-rotation);

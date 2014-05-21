@@ -103,11 +103,8 @@ public class MazewarServer {
 				
 				while(listening)
 				{
-					Socket s = server.accept();
-					
-					
+					Socket s = server.accept();		
 					ObjectOutputStream outputToClient =  new ObjectOutputStream(s.getOutputStream());
-
 					ObjectInputStream inputFromClient =  new ObjectInputStream(s.getInputStream());
 					ArrayList<Object> temp = new ArrayList<Object>();
 					temp.add(outputToClient);

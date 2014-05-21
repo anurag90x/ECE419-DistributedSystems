@@ -474,6 +474,7 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                 CellImpl cell = getCellImpl(point);
                 cell.setContents(null);
                 // Pick a random starting point, and check to see if it is already occupied
+
                 point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
                 cell = getCellImpl(point);
                 // Repeat until we find an empty cell
@@ -481,10 +482,15 @@ public class MazeImpl extends Maze implements Serializable, ClientListener, Runn
                         point = new Point(randomGen.nextInt(maxX),randomGen.nextInt(maxY));
                         cell = getCellImpl(point);
                 }
-                Direction d = Direction.random();
+                Direction[] dirArray = {Direction.North,Direction.South,Direction.East,Direction.West};
+                Direction d = dirArray[0];
+                int index = 0;
                 while(cell.isWall(d)) {
-                        d = Direction.random();
+                        d = dirArray[index];
+                        index++;
+
                 }
+                System.out.println("New direction is "+index);
                 cell.setContents(target);
                 clientMap.put(target, new DirectedPoint(point, d));
                 update();

@@ -1,0 +1,7 @@
+This is a 4 player pacman like game called Mazewar. To start the game all 4 players have to join.
+
+1. Run MazewarServer.java . It uses 4445 as the default port.
+2. Run 4 Mazewar clients with parameters as the hostname and port number where the MazewarServer is running.
+3. Enjoy :)
+
+Every time a move is made, a packet is transmitted to the central server (MazewarServer) which forwards it to all the clients including the person who sent it. It is then rendered on screen.
