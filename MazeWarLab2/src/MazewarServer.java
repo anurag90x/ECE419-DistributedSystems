@@ -23,27 +23,21 @@ public class MazewarServer {
 			int port = 4445;
 			ServerSocket server = null;
 			boolean listening;
-			
-			
 			try {
 				server = new ServerSocket(port);
 				listening = true;
-				
 				queueThread = new Thread(new Runnable() {
 					
 					
-					@Override
-					public void run() {
-						boolean rendered = false;
+				@Override
+				public void run() {
+					boolean rendered = false;
 
-						MazewarPacket render = new MazewarPacket();
-						render.renderReady = 1;
-						int counter = 0;
-						while(true){
-							
-							
-							
-							while(MazewarServer.packQueue.size()>0)
+					MazewarPacket render = new MazewarPacket();
+					render.renderReady = 1;
+					int counter = 0;
+					while(true){
+						while(MazewarServer.packQueue.size()>0)
 							{
 								System.out.println("Writing to sockets");
 								MazewarPacket packet = MazewarServer.packQueue.remove();
